@@ -1,0 +1,8 @@
+version: '3'
+services:
+  server_1:
+    image: "data-storage"
+  server_2:
+    image: "data-storage"
+  server_3:
+    image: "data-storage"

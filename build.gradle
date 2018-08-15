@@ -1,0 +1,29 @@
+plugins {
+    id 'java'
+}
+
+group 'it.polimi.distsys'
+version '1.0-SNAPSHOT'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile 'io.reactivex.rxjava2:rxjava:2.2.0'
+    compile 'com.google.code.gson:gson:2.8.5'
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+}
+
+jar {
+    manifest {
+        attributes 'Main-Class': 'it.polimi.distsys.App'
+    }
+
+    // Tell gradle to build a fat jar
+    from {
+        configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+}
