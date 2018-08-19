@@ -26,7 +26,8 @@ public class MulticastPublisher {
     }
 
 
-    public void publish(String message ) {
+    public void publish(String message) {
+        System.out.println(message);
         try {
             socket = new DatagramSocket();
         } catch (SocketException e) {
