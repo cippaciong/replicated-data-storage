@@ -3,6 +3,7 @@ package it.polimi.distsys.server;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import io.reactivex.schedulers.Schedulers;
 import it.polimi.distsys.server.messages.Join;
 import it.polimi.distsys.server.messages.JoinAck;
 import it.polimi.distsys.server.multicast.MulticastPublisher;
@@ -26,6 +27,7 @@ public class Server {
     private HashMap<String, Node> nodes = new HashMap<>();
     private MulticastPublisher multicastPublisher = new MulticastPublisher(multicastAddress, port);
     private MulticastReceiver multicastReceiver = new MulticastReceiver();
+    private Integer clock = 0;
 //    private MessageHandler messageHandler = new MessageHandler();
     private Gson gson = new Gson();
 
@@ -46,8 +48,7 @@ public class Server {
         Gson gson = new Gson();
         String joinJson = gson.toJson(join);
 
-        System.out.println("Sending Join request");
-        System.out.println(joinJson);
+        System.out.println("Multicasting Join request");
         multicastPublisher.publish(joinJson);
 
 /*        return multicastReceiver.getData()
@@ -61,9 +62,8 @@ public class Server {
     }
 
     public void run() {
-        System.out.println("Starting message processing... " + uuid.toString());
         multicastReceiver.getData()
-//                .subscribeOn(Schedulers.io())
+                .subscribeOn(Schedulers.newThread())
                 .map(message -> handleMessage(message))
                 .subscribe(element -> System.out.println(element + " - " + uuid.toString()));
 
@@ -73,7 +73,7 @@ public class Server {
 
         JsonObject jsonObject = new JsonParser().parse(message).getAsJsonObject();
         String action = jsonObject.get("action").getAsString();
-        System.out.println("Server " + uuid.toString() + "received action: " + action);
+//        System.out.println("Server " + uuid.toString() + "received action: " + action);
 
         switch (action) {
             case "join":
